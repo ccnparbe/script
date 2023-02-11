@@ -1,0 +1,92 @@
+Task1: CoPP basics:
+conf t
+ip access-list extended SSH
+permit tcp any any eq 22
+!
+conf t
+ip access-list extended TELNET
+permit tcp any any eq 23
+!
+conf t
+ip access-list extended HTTP
+permit tcp any any eq 80
+!
+conf t
+ip access-list extended HTTPS
+permit tcp any any eq 443
+!
+conf t
+ip access-list extended ICMP
+permit ICMP any any
+!
+Class-map match-all CM-SSH
+ match access-group name SSH
+!
+Class-map match-all CM-TELNET
+ match access-group name TELNET
+!
+Class-map match-all CM-HTTP
+ match access-group name HTTP
+!
+Class-map match-all CM-HTTPS
+ match access-group name HTTPS
+!
+Class-map match-all CM-ICMP
+ match access-group name ICMP
+!1000M = 1000000
+NO policy-map PM-COPP1
+policy-map PM-COPP1
+ class CM-TELNET
+ police 500000 conform-action transmit exceed-action transmit
+ !
+ class CM-SSH
+ police 50000 conform-action Drop exceed-action Drop
+ !
+ class CM-HTTP
+ police 50000 conform-action Drop exceed-action Drop
+ !
+ class CM-HTTPS
+ police 200000 conform-action Drop exceed-action Drop
+ !
+ class CM-ICMP
+ police rate 1 pps conform-action Transmit exceed-action Drop
+ !
+ class class-default
+ police 250000 conform-action Transmit exceed-action Drop
+ !
+ control-plane
+ service-policy input PM-COPP1
+end
+show policy-map 
+show class-map
+
+
+!delete/disable control-plane
+PYTHONxJSON0(config)#control-plane 
+PYTHONxJSON0(config-cp)#no serv
+PYTHONxJSON0(config-cp)#no service-policy input PM-COPP1
+
+
+NO policy-map PM-COPP2
+policy-map PM-COPP2
+ class CM-TELNET
+ police 500000 conform-action transmit exceed-action transmit
+ !
+ class CM-SSH
+ police 200000 conform-action Drop exceed-action Drop
+ !
+ class CM-HTTP
+ police 200000 conform-action Drop exceed-action Drop
+ !
+ class CM-HTTPS
+ police 200000 conform-action Drop exceed-action Drop
+ !
+ class CM-ICMP
+ police rate 1 pps conform-action Transmit exceed-action Drop
+ !
+ class class-default
+ police 250000 conform-action Transmit exceed-action Drop
+ !
+ control-plane
+ service-policy input PM-COPP2
+end

@@ -1,0 +1,65 @@
+Task2: ccna to ccnp/ccie
+skill1: Cisco Embedded Event Manager: EEM
+skill 3: Control Plane Policing: 
+
+Testing BGP:
+conf t
+		router bgp 1
+			no nei 209.9.9.3 weight 200
+			no nei 208.8.8.4 weight 133
+			no nei 207.7.7.2 weight 169
+			end
+	clear ip bgp * soft
+	
+	
+myturn, myway:
+	
+	isp1:
+config t
+access-list 41 permit host 41.41.41.41
+access-list 42 permit host 42.42.42.42
+access-list 43 permit host 43.43.43.43
+access-list 45 permit host 45.45.45.45
+NO route-map LP1
+route-map LP1 permit 10
+ match ip address 41
+  set local-pref 411
+route-map LP1 permit 20
+ match ip address 42
+  set local-pref 422
+route-map LP1 permit 30
+ match ip address 43
+ set local-pref 433
+route-map LP1 Deny 40
+ match ip address 45
+route-map LP1 Permit 50
+		router bgp 45
+			neighbor 45.4.5.5 route-map LP1 out
+			do clear ip bgp *
+end
+
+
+
+We want to Tell ISP4, that we have:
+41.41.41.41 local pref of 411
+and
+42.42.42.42 local pref of 422
+and
+43.43.43.43 local pref of 433
+and
+45.45.45.45 must be blocked.
+and
+everything Else is normal:
+
+
+
+wag kay isp2:
+neighbor 207.7.7.1 remote-as 1
+config t
+		route-map ASPATHwag2 permit 10
+			set as-path prepend 2 2 2 2 2 2 2 2 2
+			exit
+		router bgp 2
+			neighbor 207.7.7.1 route-map ASPATHwag2 OUT
+			do clear ip bgp * soft
+			end
