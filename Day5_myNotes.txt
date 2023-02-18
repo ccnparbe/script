@@ -1,0 +1,222 @@
+
+
+
+Task3: make themost expensive Sc rootbridges:
+coretaas: 
+conf t
+spanning-tree vlan 1-50 root primary
+spanning-tree vlan 51-100 root secondary
+or
+spanning-tree vlan 1-50 priority 0
+spanning-tree vlan 51-100 priority 1
+
+corebaba:
+conf t
+spanning-tree vlan 1-50 root secondary
+spanning-tree vlan 51-100 root primary
+or
+spanning-tree vlan 1-50 priority 1
+spanning-tree vlan 51-100 priority 0
+
+ACsw: never ever become RB, 2nd RB
+conf t
+spanning-tree vlan 1-100 priority 61440
+end
+
+Task4: ccnp panis ang trunking:
+acc: trunk: fa0/5-8
+conf t
+int range fa 0/5-8
+ switchport trunk encap dot1q
+ shwitchport mode trunk
+
+ct:
+acc: trunk: fa0/5-6, fa0/1,2
+conf t
+int range fa 0/1-2, fa0/5-6
+ switchport trunk encap dot1q
+ shwitchport mode trunk
+ 
+cb:
+acc: trunk: fa0/7-8, fa0/1,2
+conf t
+int range fa0/7-8, fa0/1-2
+ switchport trunk encap dot1q
+ switchport mode trunk
+ end
+ 
+ 
+Task5: layer 2 etherchannel using lacp, PaGP: obsolete/DVD
+Link Aggregation Control Protocol:
+CT/CB:
+conf t
+int range fa0/1-2
+ channel-group 1 mode active
+ channel-protocol Lacp
+Int Port-channel 1
+ switchport trunk encap dot1q
+ switchport mode trunk
+ 
+ 
+Task6: vtp trunking skills:
+ct/cb:
+conf t
+vtp domain ccnp
+vtp password encor
+vtp version 1
+vtp mode server
+exit
+
+acc: all of them:
+conf t
+vtp domain ccnp
+vtp password encor
+vtp version 1
+vtp mode client
+exit
+
+Task7: ang tunay na ccnp -> SVI
+       switched virtual interface:
+CT:
+conf t
+ip routing
+ipv6 unicast-routing
+int vlan 11
+ no shut
+ ip add 10.1.11.4 255.255.255.0
+ ipv6 add 10:1:11::4/64
+int vlan 21
+ no shut
+ ip add 10.1.21.4 255.255.255.0
+ ipv6 add 10:1:21::4/64
+
+cb:
+conf t
+ip routing
+ipv6 unicast-routing
+int vlan 12
+ no shut
+ ip add 10.1.12.4 255.255.255.0
+ ipv6 add 10:1:12::4/64
+int vlan 22
+ no shut
+ ip add 10.1.22.4 255.255.255.0
+ ipv6 add 10:1:22::4/64
+ 
+Task8: svi: vs routed ports (no switchport) -> FW/Router
+create a routedPort on CB, fa0/3
+conf t
+int fa0/3
+ no switchport 
+ no shut
+ ip add 200.0.0.12 255.255.255.0
+ do ping 200.0.0.1
+ ip route 0.0.0.0 0.0.0.0 200.0.0.1
+ 
+ 
+Task9: ccnp skills 802.1D
+9.1 learn to modify cost for not bossing:
+ACsw:
+conf t
+int fa0/6
+ spanning-tree cost 9
+ 
+ 
+CT:
+conf t
+int fa0/6
+ spanning-tree port-priority 64
+ 
+ 
+Task10: malupet na Network engineer: portfast, bpduguard
+802.1w or Rapid spanningTP:
+Ct, Cb, Ac:
+conf t
+spanning-tree mode rapid-pvst
+end
+ 
+ 
+Enabling the Features:
+Ct: root bridge
+conf t
+spanning-tree mode rapid-pvst
+spanning-tree backbonefast
+
+Cb:
+conf t
+spanning-tree mode rapid-pvst
+spanning-tree backbonefast
+ 
+ACsw: lahat:
+conf t
+spanning-tree mode rapid-pvst
+spanning-tree uplinkfast
+spanning-tree portfast bpduguard default
+int range fa0/1-4
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree guard root
+ spanning-tree bpduguard enable
+ 
+Task11: Mutiple instance spanning-tree or MST:
+Lowers CPU utilization if it's over 85%
+all:
+conf t
+spanning-tree mode MST
+sh spanning-tree mst configuration
+
+
+@all: create instance/cpu: 1, 2, 3
+conf t
+spanning-tree mode MST
+spanning-tree mst configuration
+ name TIPIDCPU
+ revision 1
+   instance 1 vlan 21-41
+   instance 2 vlan 42-62
+   instance 3 vlan 63-93
+   exit
+   do sh spanning-tree mst configuration
+   
+@tass: Make Taas Rootridge again: 
+conf t
+spanning-tree mst 0 root primary
+spanning-tree mst 1 root secondary
+spanning-tree mst 2 root primary
+spanning-tree mst 3 root secondary
+ 
+@baba:
+conf t
+spanning-tree mst 0 root secondary
+spanning-tree mst 1 root primary
+spanning-tree mst 2 root secondary
+spanning-tree mst 3 root primary
+ 
+ 
+Task12: cisco Nexus skills
+admin
+C1sc0123
+ano meron sa Nexus, na wala sa Catalyst
+checkpoint bagoito
+
+
+how to pass encore in in 3 days:
+
+Option1: me work: 3 weeks
+no LAB: 95 to 120: 700Q
+download the latest Feb/March Reviewer
+python + json,
+dnac login: https://sandboxdnac.cisco.com
+            u: devnetuser
+			p: Cisco123!
+			
+Hands-on:
+RST: ipv4/v6: static, eigrp, ospf, bgp, redistribution
+Switching: 802.1d, 802.1w.802.1s, port-priority: d1,d2,a1,a2, p1,p2
+
+pearson vue online
+
+
+
+
+
